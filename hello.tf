@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "example" {
 }
 
 resource "aws_iam_role" "ecs_execution" {
-  name = "ecs_task_execution_role"
+  # name = "ecs_task_execution_role"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -98,7 +98,7 @@ resource "aws_ecs_service" "example" {
 
 resource "aws_lb_target_group" "example" {
   name                 = "aws_lb_target_group_example"
-  vpc_id               = aws_vpc.this.id
+  vpc_id               = aws_vpc.example.id
   target_type          = "ip"
   port                 = 80
   protocol             = "HTTP"
