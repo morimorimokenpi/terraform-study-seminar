@@ -42,7 +42,6 @@ resource "aws_ecs_task_definition" "example" {
   cpu                      = "512"
   memory                   = "1024"
   execution_role_arn       = aws_iam_role.ecs_execution.arn
-  task_role_arn            = aws_iam_role.ecs_task.arn
   container_definitions = jsonencode([
     {
       name      = "first"
@@ -97,7 +96,7 @@ resource "aws_ecs_service" "example" {
 }
 
 resource "aws_lb_target_group" "example" {
-  name                 = "aws_lb_target_group_example"
+  name                 = "aws-lb-target-group-example"
   vpc_id               = aws_vpc.example.id
   target_type          = "ip"
   port                 = 80
