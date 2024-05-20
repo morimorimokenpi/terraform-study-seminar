@@ -115,17 +115,14 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-# VPCの作成
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
 }
 
-# インターネットゲートウェイの作成
 resource "aws_internet_gateway" "my_igw" {
   vpc_id = aws_vpc.my_vpc.id
 }
 
-# ルートテーブルの作成
 resource "aws_route_table" "my_route_table" {
   vpc_id = aws_vpc.my_vpc.id
 
@@ -135,7 +132,6 @@ resource "aws_route_table" "my_route_table" {
   }
 }
 
-# Subnetの作成
 resource "aws_subnet" "my_subnet_a" {
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = "10.0.2.0/24"
@@ -148,7 +144,6 @@ resource "aws_subnet" "my_subnet_b" {
   availability_zone = "us-east-1b"
 }
 
-# サブネットをルートテーブルに関連付ける
 resource "aws_route_table_association" "my_route_table_association_a" {
   subnet_id      = aws_subnet.my_subnet_a.id
   route_table_id = aws_route_table.my_route_table.id
@@ -159,7 +154,6 @@ resource "aws_route_table_association" "my_route_table_association_b" {
   route_table_id = aws_route_table.my_route_table.id
 }
 
-# IAM Roleの作成
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "my-ecs-task-execution-role"
 
@@ -176,18 +170,15 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     ]
   })
 }
-# IAM Policyをアタッチ
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy_attachment" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# ECSクラスターの作成
 resource "aws_ecs_cluster" "my_cluster" {
   name = "my-cluster"
 }
 
-# ECSタスク定義の作成
 resource "aws_ecs_task_definition" "my_task_definition" {
   family                   = "my-task-family"
   network_mode             = "awsvpc"
@@ -211,7 +202,6 @@ resource "aws_ecs_task_definition" "my_task_definition" {
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 }
 
-# ECSサービスの作成
 resource "aws_ecs_service" "my_service" {
   name            = "my-service"
   cluster         = aws_ecs_cluster.my_cluster.id
@@ -232,7 +222,6 @@ resource "aws_ecs_service" "my_service" {
   }
 }
 
-# セキュリティグループの作成
 resource "aws_security_group" "ecs_service_sg" {
   name        = "ecs-service-sg"
   vpc_id      = aws_vpc.my_vpc.id
@@ -251,7 +240,6 @@ resource "aws_security_group" "ecs_service_sg" {
   }
 }
 
-# ロードバランサー用のセキュリティグループの作成
 resource "aws_security_group" "lb_sg" {
   name        = "lb-sg"
   vpc_id      = aws_vpc.my_vpc.id
@@ -270,7 +258,6 @@ resource "aws_security_group" "lb_sg" {
   }
 }
 
-# ロードバランサーの作成
 resource "aws_lb" "my_lb" {
   name               = "my-lb"
   internal           = false
@@ -281,7 +268,6 @@ resource "aws_lb" "my_lb" {
   enable_deletion_protection = false
 }
 
-# ターゲットグループの作成
 resource "aws_lb_target_group" "my_target_group" {
   name        = "my-target-group"
   port        = 80
@@ -290,7 +276,6 @@ resource "aws_lb_target_group" "my_target_group" {
   target_type = "ip"
 }
 
-# リスナーの作成
 resource "aws_lb_listener" "my_listener" {
   load_balancer_arn = aws_lb.my_lb.arn
   port              = 80
