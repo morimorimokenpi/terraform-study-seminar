@@ -112,7 +112,7 @@
 
 
 provider "aws" {
-  region = "ap-northeast-1"
+  region = "us-east-1"
 }
 
 resource "aws_vpc" "sample_vpc" {
@@ -135,13 +135,13 @@ resource "aws_route_table" "sample_route_table" {
 resource "aws_subnet" "sample_subnet_a" {
   vpc_id            = aws_vpc.sample_vpc.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "ap-northeast-1a"
+  availability_zone = "us-east-1a"
 }
 
 resource "aws_subnet" "sample_subnet_b" {
   vpc_id            = aws_vpc.sample_vpc.id
   cidr_block        = "10.0.3.0/24"
-  availability_zone = "ap-northeast-1b"
+  availability_zone = "us-east-1b"
 }
 
 resource "aws_route_table_association" "sample_route_table_association_a" {
