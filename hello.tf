@@ -188,3 +188,4 @@ resource "aws_lb_listener" "my_listener" {
     target_group_arn = aws_lb_target_group.my_target_group.arn
   }
 }
+
