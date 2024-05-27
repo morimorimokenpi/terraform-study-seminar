@@ -383,43 +383,39 @@ resource "aws_lb_listener" "my_listener" {
 }
 
 // OIDCプロパイダ設定
-# data "http" "github_actions_openid_configuration" {
-#   url = "https://token.actions.githubusercontent.com/.well-known/openid-configuration"
-# }
+data "http" "github_actions_openid_configuration" {
+  url = "https://token.actions.githubusercontent.com/.well-known/openid-configuration"
+}
 
-# data "tls_certificate" "github_actions" {
-#   url = jsondecode(data.http.github_actions_openid_configuration.body).jwks_uri
-# }
+data "tls_certificate" "github_actions" {
+  url = jsondecode(data.http.github_actions_openid_configuration.body).jwks_uri
+}
 
-# resource "aws_iam_openid_connect_provider" "github_actions" {
-#   url             = "https://token.actions.githubusercontent.com"
-#   client_id_list  = ["sts.amazonaws.com"]
-#   thumbprint_list = [data.tls_certificate.github_actions.certificates[0].sha1_fingerprint]
-# }
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.github_actions.certificates[0].sha1_fingerprint]
+}
 
 // Github Actions用IAMロール
-# resource "aws_iam_role" "github_actions" {
-#   name = "my-github-actions-role"
-#   assume_role_policy = templatefile("./assume_role.json",
-#     {
-#       account_id  = data.aws_caller_identity.current.account_id,
-#       github_org  = "yuya2017",
-#       github_repo = "terraform-study",
-#     }
-#   )
-# }
+resource "aws_iam_role" "github_actions" {
+  name = "sample-github-actions-role"
+  assume_role_policy = templatefile("./assume_role.json",
+    {
+      account_id  = data.aws_caller_identity.current.account_id,
+      github_org  = "morimorimokenpi",
+      github_repo = "terraform-study-seminar",
+    }
+  )
+}
 
-# resource "aws_iam_policy" "github_actions" {
-#   name   = "my-github-actions-policy"
-#   policy = templatefile("./administrator.json", {})
-# }
+resource "aws_iam_policy" "github_actions" {
+  name   = "sample-github-actions-policy"
+  policy = templatefile("./administrator.json", {})
+}
 
-# resource "aws_iam_role_policy_attachment" "github_actions" {
-#   role       = aws_iam_role.github_actions.name
-#   policy_arn = aws_iam_policy.github_actions.arn
-# }
-
-# output "alb_dns_name" {
-#   value = aws_lb.my_lb.dns_name
-# }
+resource "aws_iam_role_policy_attachment" "github_actions" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions.arn
+}
 
